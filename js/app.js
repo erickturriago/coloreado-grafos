@@ -25,7 +25,7 @@ btnRun.addEventListener('click',(e)=>{
 })
 
 btnClear.addEventListener('click',(e)=>{
-    vista.resetApp();
+    vista.resetApp(modelo.getGrafo());
 })
 
 tools.forEach((tool)=>{

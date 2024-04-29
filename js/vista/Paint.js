@@ -5,7 +5,7 @@ export default class Paint{
     constructor(){
         this.canvas = document.querySelector("canvas");
         this.ctx = this.canvas.getContext('2d');
-        this.anchoPincel = 5;
+        this.anchoPincel = 3;
         this.radioNodo=35;
         this.nodoMover=null;
         this.idNodo=1;
@@ -14,26 +14,55 @@ export default class Paint{
     }
 
     drawAll(nodos,arista){
+        this.ctx.beginPath();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         arista.forEach((arista)=>{
             this.ctx.beginPath(); // Iniciar un nuevo camino de dibujo
+            this.ctx.lineWidth = this.anchoPincel;
+            this.ctx.strokeStyle = "#9B9B9B";
             this.ctx.moveTo(arista.nodoA.getX(), arista.nodoA.getY()); // Mover el lápiz al punto A
             this.ctx.lineTo(arista.nodoB.getX(), arista.nodoB.getY()); // Dibujar una línea hasta el punto B
             this.ctx.stroke();
+        
+            // Calcular la mitad de la arista
+            let mitadX = (arista.nodoA.getX() + arista.nodoB.getX()) / 2;
+            let mitadY = (arista.nodoA.getY() + arista.nodoB.getY()) / 2;
+        
+            // Calcular la distancia entre los nodos para determinar la longitud de la arista
+            let distancia = Math.sqrt(Math.pow(arista.nodoB.getX() - arista.nodoA.getX(), 2) + Math.pow(arista.nodoB.getY() - arista.nodoA.getY(), 2));
+        
+            // Calcular el ángulo de la arista
+            let angulo = Math.atan2(arista.nodoB.getY() - arista.nodoA.getY(), arista.nodoB.getX() - arista.nodoA.getX());
+        
+            // Calcular la posición de la etiqueta del peso
+            let etiquetaX = mitadX - (this.ctx.measureText(arista.peso).width / 2); // Restamos la mitad de la longitud del texto
+            let etiquetaY = mitadY + 7; // Ajustamos la posición vertical según el tamaño de la fuente
+        
+            // Dibujar la etiqueta del peso
+            this.ctx.font = "bold 20px Arial";
+            this.ctx.fillStyle = "#000";
+            this.ctx.fillText(arista.peso, etiquetaX, etiquetaY);
+
         })
     
         nodos.forEach((nodo)=>{
             this.ctx.beginPath();
-            this.ctx.setLineDash([])
-            this.ctx.lineWidth=this.anchoPincel
-            this.ctx.strokeStyle = nodo.color;
-            this.ctx.fillStyle=nodo.color;
+            this.ctx.lineWidth=this.anchoPincel;
+            this.ctx.strokeStyle = "#000000";
+            if(nodo.color == null){
+                this.ctx.fillStyle= "#ffffff"
+            }
+            else{
+                this.ctx.fillStyle= nodo.color;
+            }
+
             this.ctx.arc(nodo.x, nodo.y, this.radioNodo, 0, 2 * Math.PI);
             this.ctx.stroke()
             this.ctx.fill()
-    
+            
+            this.ctx.beginPath();
             this.ctx.font = '40px Arial'; // Fuente y tamaño
-            this.ctx.fillStyle = 'white'; // Color del texto
+            this.ctx.fillStyle = 'black'; // Color del texto
             if(nodo.getId()>=10){
                 this.ctx.fillText(nodo.getId(), nodo.x-22, nodo.y+15);
             }
@@ -85,7 +114,6 @@ export default class Paint{
                 aristaEncontrada = arista;
             }
         });
-    
         return aristaEncontrada;
     }
     
@@ -99,7 +127,7 @@ export default class Paint{
 
         let nodoExistente = this.getNodoClick(e,grafo.getNodos())
         if(nodoExistente) return; //Si se da click sobre un nodo o muy cerca
-        grafo.agregarNodo(new Nodo(nodoId+1,e.offsetX,e.offsetY,'#000'))
+        grafo.agregarNodo(new Nodo(nodoId+1,e.offsetX,e.offsetY,null))
     }
     
     drawEdge = (e,grafo)=>{
@@ -133,8 +161,16 @@ export default class Paint{
             if(isValidEdge){
                 this.arista[0].addVecino(this.arista[1])
                 this.arista[1].addVecino(this.arista[0])
-                const aristaN = new Arista(aristaId+1,this.arista[0],this.arista[1],'#000',null)
-                grafo.agregarArista(aristaN)
+                let peso = undefined
+                do{
+                    peso = prompt(`Ingrese un peso para la arista entre ${this.arista[0].id} y ${this.arista[1].id}`);
+
+                } while(isNaN(peso))
+
+                const aristaN = new Arista(aristaId+1,this.arista[0],this.arista[1],null,peso)
+                aristaN.nodoA.aristas.push(aristaN);
+                aristaN.nodoB.aristas.push(aristaN);
+                grafo.agregarArista(aristaN);
                 this.arista=[]
             }
             else{
@@ -170,6 +206,15 @@ export default class Paint{
         else{
             let aristaBorrar = this.getEdgeClick(e,grafo.getAristas())
             if(aristaBorrar){
+                let nodoA = aristaBorrar.nodoA;
+                let nodoB = aristaBorrar.nodoB;
+                nodoA.aristas = nodoA.aristas.filter((a)=>a.id!=aristaBorrar.id)
+                nodoB.aristas = nodoB.aristas.filter((a)=>a.id!=aristaBorrar.id)
+
+                nodoA.vecinos = nodoA.vecinos.filter((v)=>v.id!=nodoB.id)
+                nodoB.vecinos = nodoB.vecinos.filter((v)=>v.id!=nodoA.id)
+
+
                 grafo.aristas = grafo.aristas.filter((arista)=>arista.getId()!==aristaBorrar.getId())
             }
         }

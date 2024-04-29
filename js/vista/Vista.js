@@ -9,11 +9,7 @@ export default class Vista{
     setToolActive(tool) {
         this.toolActive = tool;
     }
-
-    pintarColoreado(coloreado){
-        console.log("Coloreando")
-    }
-
+    
     setNodoMover(e,nodos){
         if(this.toolActive!='move') return;
         this.paint.startMove(e,nodos);
@@ -43,12 +39,14 @@ export default class Vista{
         this.paint.drawAll(grafo.getNodos(),grafo.getAristas())
     }
 
-    dibujarTodo(nodos,aristas){
-        this.paint.dibujarTodo(nodos,aristas);
+    dibujarTodo(grafo){
+        this.paint.drawAll(grafo.getNodos(),grafo.getAristas())
     }
 
-    resetApp(){
-        console.log("Reseteando app")
+    resetApp(grafo){
+        grafo.nodos=[]
+        grafo.aristas=[]
+        this.paint.drawAll(grafo.getNodos(),grafo.getAristas())
     }
 
 }

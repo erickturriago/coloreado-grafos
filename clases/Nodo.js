@@ -5,8 +5,8 @@ export default class Nodo{
         this.x=x;
         this.y=y;
         this.color=color;
+        this.aristas=[]
         this.vecinos=[]
-        this.paquetes = [];
     }
      // Getter y setter para id
     getId() {
@@ -14,6 +14,14 @@ export default class Nodo{
     }
     setId(id) {
         this.id = id;
+    }
+
+    // Getter y setter para Vecinos
+    getVecinos() {
+        return this.vecinos;
+    }
+    setVecinos(vecinos) {
+        this.vecinos = vecinos;
     }
 
     // Getter y setter para x
@@ -45,15 +53,6 @@ export default class Nodo{
         if(!this.vecinos.includes(nodo)){
             this.vecinos.push(nodo)
         }
-    }
-    recibirPaquete(paquete) {
-        if (!this.paquetes) {
-            this.paquetes = [];
-        }
-        this.paquetes.push(paquete);
-    }
-    enviarPaquete() {
-        
     }
 
     setColor(color){

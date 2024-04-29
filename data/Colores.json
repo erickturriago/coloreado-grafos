@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "hex": "#FF0000",
+        "nombre": "Rojo"
+    },
+    {
+        "id": 2,
+        "hex": "#00FF00",
+        "nombre": "Verde"
+    },
+    {
+        "id": 3,
+        "hex": "#0000FF",
+        "nombre": "Azul"
+    },
+    {
+        "id": 4,
+        "hex": "#FFFF00",
+        "nombre": "Amarillo"
+    },
+    {
+        "id": 5,
+        "hex": "#FFA500",
+        "nombre": "Naranja"
+    },
+    {
+        "id": 6,
+        "hex": "#800080",
+        "nombre": "Púrpura"
+    },
+    {
+        "id": 7,
+        "hex": "#008080",
+        "nombre": "Turquesa"
+    }
+]
